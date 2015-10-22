@@ -82,5 +82,5 @@
       "password": "pbkdf2_sha256$20000$eHoyQLXk9VCg$eay/Gb4xWad7uE48PUPzCpmmAKLcYeyv37MFrSRpubE="
     },
     "model": "auth.user"
-  },
+  }
 ]

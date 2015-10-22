@@ -5,10 +5,7 @@
 1. Склонировать проект
 2. Создать virtualenv
 3. Установить Dlango 1.8.5
-4. Переименовать файл initial_data.json (например, _initial_data.json)
 5. Выполнить команду python manage.py syncdb
-6. Вернуть наименование initial_data.json
-7. Повторить 5 шаг
+6. Выполнить команду python manage.py loaddata initial_data.json для загрузки начальных данных
 8. Выполнить команду python manage.py runserver
 
-Шаги 4-7 необходимы в связи с тем, что иначе система инициализирует данные до создания таблиц в БД.
