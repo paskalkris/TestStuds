@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block script %}<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>{% endblock %}
+
+{% block scriptbody %}
+<script>
+    $(document).ready(function() {
+        $(document).on('submit', 'form#ajax_form', function(e){
+            e.preventDefault();
+            $.ajax({
+                url: '{% block url_str %}{% endblock url_str %}',
+                type: 'POST',
+                dataType: "json",
+                data: $(this).serialize(),
+                success:  function(response) {
+                    //result = jQuery.parseJSON(response);
+                    $.each(response, function(index, value){
+                        alert(index + ' : ' + value);
+                        $("input[name="+index+"]").attr('class', 'form-control has-error');
+                    });
+                    alert('Данные успешно сохранены');
+                },
+                error: function(response) {
+                    result = jQuery.parseJSON(response.responseJSON);
+                    $.each(result, function(index, value){
+                        td = $("input[name="+index+"]").parent()
+                        td.attr('class', 'form-group has-error');
+                        td.append("<p class=help-block>Неверное значение</p>")
+                    });
+                }
+            });
+        });
+
+        $("input[id^='id_']").attr('class', 'form-control');
+
+        $("input[id^='id_']").change(function(){
+            $(this).parent().attr('class', 'form-group');
+            $(this).parent().remove('p');
+        });
+    });
+
+</script>
+{% endblock scriptbody %}
+
+{% block content %}
+{% if data_set %}
+      <form method="post" id="ajax_form" action="">
+      {% csrf_token %}
+      {% block hidden %}{% endblock hidden %}
+        <table class="table table-striped" id="studs">
+            <thead>
+                <tr>
+                    {% block table_head %}{% endblock table_head %}
+                <tr>
+            </thead>
+            <tbody class="table_body">
+            {% block table_body %}{% endblock table_body %}
+                <tr>
+                    {% block table_form %}{% endblock table_form %}
+                    <td><input type="submit" id="send_btn" value="Сохранить" /></td>
+                </tr>
+            </tbody>
+        </table>
+      </form>
+{% else %}
+    <p>No {{ set_name }} are avaliable</p>
+{% endif %}
+
+{% endblock content %}

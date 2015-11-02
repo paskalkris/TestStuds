@@ -1,0 +1,32 @@
+{% extends "edit_base.html" %}
+
+{% block header %}Список Студентов группы {{ group.name }}{% endblock %}
+
+{% block url_str %}{% url 'stud:studs_list' group.id %}{% endblock url_str %}
+
+      {% block hidden %}{{ form.cgroup }}{% endblock hidden %}
+
+                    {% block table_head %}
+                    <th>ФИО</th>
+                    <th>Дата рождения</th>
+                    <th>№ студ-билета</th>
+                    <th></th>
+                    {% endblock table_head %}
+
+
+            {% block table_body %}
+            {% for stud in group.stud_set.all %}
+                <tr id="{{ stud.id }}">
+                    <td type="name">{{ stud.name }}</td>
+                    <td type="dbirthday">{{ stud.dbirthday|date:"d.m.Y" }}</td>
+                    <td type="nstud">{{ stud.nstud }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            {% endblock table_body %}
+
+                    {% block table_form %}
+                    <td class="form-group">{{ form.name }}</td>
+                    <td class="form-group">{{ form.dbirthday }}</td>
+                    <td class="form-group">{{ form.nstud }}</td>
+                    {% endblock table_form %}

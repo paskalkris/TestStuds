@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "bootstrap.min.css" %}" />
+    <title>{% block title %}Управление базой студентов{% endblock %}</title>
+    {% block script %}{% endblock %}
+</head>
+
+<body>{% block body %}
+{% block scriptbody %}{% endblock scriptbody %}
+    <div class = "row">
+        <div class="col-md-12">
+            <header>
+            <h1 class="text-center">{% block header %}Управление базой студентов{% endblock %}</h1>
+            </header>
+        </div>
+    </div>
+    <div class = "row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <div id="content">
+            {% block content %}{% endblock %}
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+{% endblock body %}
+</body>
+</html>

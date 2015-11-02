@@ -1,0 +1,29 @@
+{% extends "edit_base.html" %}
+
+{% block header %}Список Групп{% endblock %}
+
+{% block url_str %}{% url 'group:groups_list' %}{% endblock url_str %}
+
+
+                    {% block table_head %}
+                    <th>Наименование</th>
+                    <th>Староста</th>
+                    <th class="text-center">Кол-во человек</th>
+                    {% endblock table_head %}
+
+            {% block table_body %}
+            {% for group in groups_list %}
+                <tr id="{{ group.id }}">
+                    <td><a href="{% url 'stud:studs_list' group.id %}">{{ group.name }}</a></td>
+                    <td>{{ group.starosta }}</td>
+                    <td class="text-center">{{ group.stud_set.count }}</td>
+                </tr>
+            {% endfor %}
+            {% endblock table_body %}
+
+
+                    {% block table_form %}
+                    <td class="form-group">{{ form.name }}</td>
+                    <td class="form-group">{{ form.starosta }}</td>
+                    <td class="form-group"></td>
+                    {% endblock table_form %}
