@@ -14,10 +14,10 @@
                 data: $(this).serialize(),
                 success:  function(response) {
                     //result = jQuery.parseJSON(response);
-                    $.each(response, function(index, value){
-                        alert(index + ' : ' + value);
-                        $("input[name="+index+"]").attr('class', 'form-control has-error');
-                    });
+                    //$.each(response, function(index, value){
+                    //    alert(index + ' : ' + value);
+                    //    $("input[name="+index+"]").attr('class', 'form-control has-error');
+                    //});
                     alert('Данные успешно сохранены');
                 },
                 error: function(response) {
@@ -35,7 +35,7 @@
 
         $("input[id^='id_']").change(function(){
             $(this).parent().attr('class', 'form-group');
-            $(this).parent().remove('p');
+            $(this).parent().remove("p");
         });
     });
 

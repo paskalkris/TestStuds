@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block header %}{% if group %}Группа {{ group.name }}{% else %}Создание новой группы{% endif %}{% endblock %}
+
+{% block content %}
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <form action="." method="post" class="form-horizontal">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Сохранить" class="btn btn-primary">
+        </form>
+        {% if group %}
+        <form action="{% if group.stud_set.count > 0 %}{% url 'group:confirm_delete' group.id %}{% else %}{% url 'group:group_delete' group.id %}{% endif %}">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-default" onclick="{% if group.stud_set.count == 0 %}return confirm('Удалить группу {{ group.name }}?'){% endif %}"  value="Удалить группу">
+        </form>
+        {% endif %}
+{% endblock content %}
+

@@ -1,3 +1,4 @@
+from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
@@ -5,50 +6,58 @@ from django import forms
 from django.views import generic
 from students.models import Stud
 from .models import Group
-
-class AjaxableResponseMixin(object):
-    def form_invalid(self, form):
-        response = super(AjaxableResponseMixin, self).form_invalid(form)
-        print(form.errors.as_json())
-        if self.request.is_ajax():
-            return JsonResponse(form.errors.as_json(), status=400, safe=False)
-        else:
-            return response
-
-    def form_valid(self, form):
-        # We make sure to call the parent's form_valid() method because
-        # it might do some processing (in the case of CreateView, it will
-        # call form.save() for example).
-        try:
-            response = super(AjaxableResponseMixin, self).form_valid(form)
-        except Exception as e:
-            print(e)
-        if self.request.is_ajax():
-            data = form.cleaned_data
-            return JsonResponse(data)
-        else:
-            return response
+from .forms import GroupCreateForm, GroupEditForm
 
 
-class GroupsView(AjaxableResponseMixin, CreateView):
-    model = Group
-    fields = ['name', 'starosta']
+def groups_list(request):
+    glist = Group.objects.order_by('name')
+    context = {'groups_list': glist}
     template_name = 'groups/groups_list.html'
-
-    def dispatch(self, *args, **kwargs):
-        self.groups_list = Group.objects.order_by('name')
-        return super(GroupsView, self).dispatch(*args, **kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(GroupsView, self).get_context_data(**kwargs)
-        context['groups_list'] = self.groups_list
-        context['data_set'] = self.groups_list
-        context['set_name'] = 'groups'
-        return context
-
-    def get_form(self, form_class=None):
-        form = super(GroupsView, self).get_form(form_class)
-        form.fields['starosta'].queryset = Stud.objects.filter(cgroup=form.instance.id)
-        return form
+    return render(request, template_name, context)
 
 
+def studs_list(request, group_id):
+    group = get_object_or_404(Group, pk=group_id)
+    context = {'group': group}
+    template_name = 'groups/studs_list.html'
+    return render(request, template_name, context)
+
+
+def group_create(request):
+    if request.method == 'POST':
+        form = GroupCreateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('group:groups_list')
+    else:
+        form = GroupCreateForm()
+    return render(request, 'groups/group_form.html', {'form': form})
+
+
+def group_edit(request, group_id):
+    group = get_object_or_404(Group, pk=group_id)
+    if request.method == 'POST':
+        form = GroupEditForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            return redirect('group:groups_list')
+    else:
+        form = GroupEditForm(instance=group)
+    return render(request, 'groups/group_form.html', {'form': form, 'group': group})
+
+
+def group_delete(request, group_id):
+    group = get_object_or_404(Group, pk=group_id)
+    try:
+        group.delete()
+        return redirect('group:groups_list')
+    except Exception as e:
+        form = GroupEditForm(instance=group)
+        return render(request, 'groups/group_form.html', {'form': form, 'group': group, 'error_message': e})
+
+
+def confirm_delete(request, group_id):
+    group = get_object_or_404(Group, pk=group_id)
+    context = {'group': group}
+    template_name = 'groups/confirm_delete.html'
+    return render(request, template_name, context)

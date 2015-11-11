@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block header %}Список студентов группы {{ group.name }}{% endblock %}
+
+{% block content %}
+        <a href="{% url 'group:groups_list' %}">Вернуться к списку групп</a>
+{% if group.stud_set.all %}
+        <table class="table table-striped" id="studs">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ФИО</th>
+                    <th>Дата рождения</th>
+                    <th>№ студ-билета</th>
+                    <th class="text-center">Cтароста</th>
+                <tr>
+            </thead>
+            <tbody class="table_body">
+            {% for stud in group.stud_set.all %}
+                <tr>
+                    <td>{{ stud.id }}</td>
+                    <td><a href="{% url 'stud:stud_edit' stud.id group.id  %}">{{ stud.name }}</a></td>
+                    <td>{{ stud.dbirthday|date:"d.m.Y" }}</td>
+                    <td>{{ stud.nstud }}</td>
+                    <td class="text-center"><input type="checkbox" disabled {% if stud == group.starosta %}checked{% endif %}></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <p class="text-right"><strong>Всего студентов: {{ group.stud_set.count }}</strong></p>
+{% else %}
+    <p class="text-center text-warning">No students are avaliable</p>
+{% endif %}
+{% block another %}
+        <form method="LINK" action="{% url 'stud:stud_create' group.id %}" class="text-right">
+            <input type="submit" value="Создать" class="btn btn-default">
+        </form>
+{% endblock another %}
+{% endblock content %}

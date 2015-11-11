@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block header %}{% if stud %}Студент {{ stud.name }}{% else %}Создание нового студента{% endif %}{% endblock %}
+
+{% block content %}
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        <form class="form-horizontal" action="." method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Сохранить" class="btn btn-primary">
+        </form>
+        {% if stud %}
+        <form action="{% url 'stud:stud_delete' stud.id stud.cgroup.id %}">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-default" onclick="return confirm('Удалить студента {{ stud.name }}?')"  value="Удалить студента">
+        </form>
+        {% endif %}
+{% endblock content %}
+

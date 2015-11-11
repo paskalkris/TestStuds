@@ -1,60 +1,41 @@
-from django.views.generic.edit import CreateView
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from django import forms
-from groups.models import Group
-
+from groups.views import studs_list
 from .models import Stud
+from .forms import StudForm
 
 
-class AjaxableResponseMixin(object):
-    def form_invalid(self, form):
-        response = super(AjaxableResponseMixin, self).form_invalid(form)
-        print(form.errors.as_json())
-        if self.request.is_ajax():
-            return JsonResponse(form.errors.as_json(), status=400, safe=False)
-        else:
-            return response
-
-    def form_valid(self, form):
-        # We make sure to call the parent's form_valid() method because
-        # it might do some processing (in the case of CreateView, it will
-        # call form.save() for example).
-        try:
-            response = super(AjaxableResponseMixin, self).form_valid(form)
-        except Exception as e:
-            print(e)
-        if self.request.is_ajax():
-            data = form.cleaned_data
-            #{
-            #    'pk': self.object.pk,
-            #}
-            return JsonResponse(data)
-        else:
-            return response
+def stud_create(request, group_id):
+    if request.method == 'POST':
+        form = StudForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('group:studs_list', group_id=group_id)
+    else:
+        form = StudForm(initial={'cgroup': group_id})
+    return render(request, 'students/stud_form.html', {'form': form})
 
 
-class StudsView(AjaxableResponseMixin, CreateView):
-    model = Stud
-    fields = ['name', 'dbirthday', 'cgroup', 'nstud']
-    template_name = 'students/studs_list.html'
+def stud_edit(request, group_id, stud_id):
+    stud = get_object_or_404(Stud, pk=stud_id)
+    if request.method == 'POST':
+        form = StudForm(request.POST, instance=stud)
+        if form.is_valid():
+            form.save()
+            return redirect('group:studs_list', group_id=group_id)
+    else:
+        form = StudForm(instance=stud)
+    return render(request, 'students/stud_form.html', {'form': form, 'stud': stud})
 
-    def dispatch(self, *args, **kwargs):
-        self.group = get_object_or_404(Group, pk=kwargs['group_pk'])
-        return super(StudsView, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(StudsView, self).get_context_data(**kwargs)
-        context['group'] = self.group
-        context['data_set'] = self.group.stud_set
-        context['set_name'] = 'students'
-        return context
-
-    def get_initial(self):
-        return {'cgroup': self.group}
-
-    def get_form(self, form_class=None):
-        form = super(StudsView, self).get_form(form_class)
-        form.fields['cgroup'].widget = forms.HiddenInput()
-        return form
+def stud_delete(request, group_id, stud_id):
+    stud = get_object_or_404(Stud, pk=stud_id)
+    try:
+        stud.delete()
+        return redirect('group:studs_list', group_id=group_id)
+    except Exception as e:
+        form = StudForm(instance=stud)
+        return render(request, 'students/stud_form.html', {'form': form, 'stud': stud, 'error_message': e})
 

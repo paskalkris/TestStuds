@@ -1,29 +1,38 @@
-{% extends "edit_base.html" %}
+{% extends "base.html" %}
 
 {% block header %}Список Групп{% endblock %}
 
-{% block url_str %}{% url 'group:groups_list' %}{% endblock url_str %}
-
-
-                    {% block table_head %}
+{% block content %}
+{% if groups_list %}
+        <table class="table table-striped" id="studs">
+            <thead>
+                <tr>
+                    <th>ID</th>
                     <th>Наименование</th>
                     <th>Староста</th>
                     <th class="text-center">Кол-во человек</th>
-                    {% endblock table_head %}
-
-            {% block table_body %}
+                    <th class="text-center">Действие</th>
+                <tr>
+            </thead>
+            <tbody class="table_body">
             {% for group in groups_list %}
-                <tr id="{{ group.id }}">
-                    <td><a href="{% url 'stud:studs_list' group.id %}">{{ group.name }}</a></td>
-                    <td>{{ group.starosta }}</td>
+                <tr>
+                    <td>{{ group.id }}</td>
+                    <td><a href="{% url 'group:studs_list' group.id %}">{{ group.name }}</a></td>
+                    <td>{% if group.starosta %}{{ group.starosta }}{% endif %}</td>
                     <td class="text-center">{{ group.stud_set.count }}</td>
+                    <td class="text-center"><a href="{% url 'group:group_edit' group.id %}">Edit</a></td>
                 </tr>
             {% endfor %}
-            {% endblock table_body %}
+            </tbody>
+        </table>
+{% else %}
+    <p>No groups are avaliable</p>
+{% endif %}
 
+        <form method="LINK" action="{% url 'group:group_create' %}" class="text-right">
+            <input type="submit" value="Создать" class="btn btn-default">
+        </form>
 
-                    {% block table_form %}
-                    <td class="form-group">{{ form.name }}</td>
-                    <td class="form-group">{{ form.starosta }}</td>
-                    <td class="form-group"></td>
-                    {% endblock table_form %}
+{% endblock content %}
+
