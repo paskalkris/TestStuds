@@ -10,24 +10,39 @@
 <body>{% block body %}
 {% block scriptbody %}{% endblock scriptbody %}
     <div class = "row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 text-right">
+            <nav class="navbar navbar-default">
+              <div class="container-fluid">
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="#">Управление базой студентов</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                  <ul class="nav navbar-nav">
+                    <li><a href="{% url 'group:groups_list' %}">Список групп</a></li>
+                    {% block add_links %}{% endblock add_links %}
+                  </ul>
+                  {% block loginout %}
+                  {% if user.is_authenticated %}
+                  <p class="navbar-text navbar-right">Пользователь: {{ user }} <a class="navbar-link" href="{% url 'acc:logout' %}?next={% url 'group:groups_list' %}">Выход</a></p>
+                  {% else %}
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><a class="navbar-link" href="{% url 'acc:login' %}">Вход</a></li>
+                  </ul>
+                  {% endif %}
+                  {% endblock loginout %}
+                </div>
+              </div>
+            </nav>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    <div class = "row">
         <div class="col-md-12">
             <header>
             <h1 class="text-center">{% block header %}Управление базой студентов{% endblock %}</h1>
             </header>
         </div>
-    </div>
-    <div class = "row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6 text-right">
-            {% block loginout %}
-            {% if user.is_authenticated %}
-            <div>Пользователь: {{ user }}</div><a href="{% url 'acc:logout' %}?next={% url 'group:groups_list' %}">Выход</a>
-            {% else %}
-            <a href="{% url 'acc:login' %}">Вход</a>
-            {% endif %}
-            {% endblock loginout %}
-        </div>
-        <div class="col-md-3"></div>
     </div>
     <div class = "row">
         <div class="col-md-3"></div>

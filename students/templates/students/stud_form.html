@@ -3,6 +3,8 @@
 
 {% block header %}{% if stud %}Студент {{ stud.name }}{% else %}Создание нового студента{% endif %}{% endblock %}
 
+{% block add_links %}<li><a href="{% url 'group:studs_list' stud.cgroup.id %}">Список студентов</a></li>{% endblock %}
+
 {% block content %}
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         <form class="form-horizontal" action="." method="post">
