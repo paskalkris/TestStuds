@@ -22,7 +22,5 @@ urlpatterns = [
     url(r'^groups/', include('groups.urls', namespace="group")),
     url(r'^students/', include('students.urls', namespace="stud")),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include('django.contrib.auth.urls', namespace="acc")),
 ]
-
-#if settings.DEBUG:
-#    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

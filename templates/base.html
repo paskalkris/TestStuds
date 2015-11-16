@@ -18,6 +18,19 @@
     </div>
     <div class = "row">
         <div class="col-md-3"></div>
+        <div class="col-md-6 text-right">
+            {% block loginout %}
+            {% if user.is_authenticated %}
+            <div>Пользователь: {{ user }}</div><a href="{% url 'acc:logout' %}?next={% url 'group:groups_list' %}">Выход</a>
+            {% else %}
+            <a href="{% url 'acc:login' %}">Вход</a>
+            {% endif %}
+            {% endblock loginout %}
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    <div class = "row">
+        <div class="col-md-3"></div>
         <div class="col-md-6">
             <div id="content">
             {% block content %}{% endblock %}

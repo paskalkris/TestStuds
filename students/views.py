@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from groups.views import studs_list
 from .models import Stud
 from .forms import StudForm
 
-
+@login_required
 def stud_create(request, group_id):
     if request.method == 'POST':
         form = StudForm(request.POST)
@@ -17,7 +18,7 @@ def stud_create(request, group_id):
         form = StudForm(initial={'cgroup': group_id})
     return render(request, 'students/stud_form.html', {'form': form})
 
-
+@login_required
 def stud_edit(request, group_id, stud_id):
     stud = get_object_or_404(Stud, pk=stud_id)
     if request.method == 'POST':
@@ -29,7 +30,7 @@ def stud_edit(request, group_id, stud_id):
         form = StudForm(instance=stud)
     return render(request, 'students/stud_form.html', {'form': form, 'stud': stud})
 
-
+@login_required
 def stud_delete(request, group_id, stud_id):
     stud = get_object_or_404(Stud, pk=stud_id)
     try:
